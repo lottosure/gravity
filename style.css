@@ -362,18 +362,27 @@ body.moon-mode .stars {
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .control-panel {
-        width: 150px;
-        padding: 12px;
-        font-size: 0.9rem;
+        width: 120px;
+        padding: 8px;
+        font-size: 0.8rem;
     }
 
     .control-panel h3 {
-        font-size: 1rem;
-        margin-bottom: 10px;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
     }
 
     .slider-container {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+    }
+
+    .slider-label {
+        font-size: 0.8rem;
+    }
+
+    .slider-value {
+        min-width: 35px;
+        font-size: 0.8rem;
     }
 
     .jump-history {
