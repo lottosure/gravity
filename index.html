@@ -9,264 +9,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <!-- Google Fonts for Cute Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --earth-bg: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
-            --earth-ground: #2ecc71;
-            --mars-bg: linear-gradient(180deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            /* Soft Red/Pink */
-            --mars-ground: #e17055;
-            --moon-bg: linear-gradient(180deg, #2c3e50 0%, #bdc3c7 100%);
-            --moon-ground: #95a5a6;
-
-            --primary-btn: #6c5ce7;
-            --text-color: #2d3436;
-        }
-
-        body {
-            font-family: 'Jua', 'Nunito', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            background: var(--earth-bg);
-            transition: background 0.5s ease;
-            color: var(--text-color);
-            overflow-x: hidden;
-            /* Prevent horizontal scroll */
-        }
-
-        h1 {
-            margin-top: 20px;
-            font-size: 2rem;
-            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
-            text-align: center;
-            padding: 0 10px;
-            color: white;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 90%;
-            max-width: 600px;
-        }
-
-        .planet-btn {
-            border: none;
-            padding: 8px 16px;
-            font-size: 1rem;
-            font-family: 'Jua', sans-serif;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            color: white;
-            flex: 1;
-            min-width: 100px;
-            white-space: nowrap;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            line-height: 1.2;
-        }
-
-        .planet-btn span.gravity-val {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            font-family: 'Nunito', sans-serif;
-        }
-
-        .planet-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-earth {
-            background-color: #0984e3;
-        }
-
-        .btn-mars {
-            background-color: #d63031;
-        }
-
-        .btn-moon {
-            background-color: #636e72;
-        }
-
-        .planet-btn.active {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
-            font-weight: bold;
-            z-index: 1;
-        }
-
-        .main-container {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-            max-width: 1000px;
-            padding-bottom: 40px;
-        }
-
-        #canvas-container {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 0.1);
-            border: 5px solid rgba(255, 255, 255, 0.5);
-            /* Responsive Canvas */
-            width: 90vw;
-            max-width: 500px;
-            height: auto;
-            aspect-ratio: 6/5;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-
-        .jump-btn-container {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        #jump-btn {
-            background-color: var(--primary-btn);
-            color: white;
-            border: none;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            font-family: 'Jua', sans-serif;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #4834d4, 0 10px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.1s;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            line-height: 1.1;
-        }
-
-        #jump-btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 0 0 #4834d4, 0 0 0 rgba(0, 0, 0, 0.2);
-        }
-
-        #jump-btn:disabled {
-            background-color: #b2bec3;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .scoreboard {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 300px;
-        }
-
-        .scoreboard h2 {
-            margin-top: 0;
-            text-align: center;
-            color: var(--primary-btn);
-            border-bottom: 2px dashed #dfe6e9;
-            padding-bottom: 10px;
-            font-size: 1.4rem;
-        }
-
-        .score-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 12px 0;
-            font-size: 1.1rem;
-            align-items: center;
-        }
-
-        .score-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .score-value {
-            font-weight: bold;
-            color: #636e72;
-        }
-
-        .current-height {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
-        }
-
-        .planet-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        /* Stars for Moon Background */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background-image:
-                radial-gradient(white, rgba(255, 255, 255, .2) 2px, transparent 3px),
-                radial-gradient(white, rgba(255, 255, 255, .15) 1px, transparent 2px),
-                radial-gradient(white, rgba(255, 255, 255, .1) 2px, transparent 3px);
-            background-size: 550px 550px, 350px 350px, 250px 250px;
-            background-position: 0 0, 40px 60px, 130px 270px;
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: -1;
-        }
-
-        body.moon-mode .stars {
-            opacity: 1;
-        }
-    </style>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
     <div class="stars"></div>
+
+    <!-- Control Panel (moved to power gauge location) -->
+    <div class="control-panel">
+        <h3>⚙️ 설정</h3>
+
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>무게</span>
+                <span class="slider-value" id="weight-value">1.0x</span>
+            </div>
+            <input type="range" id="weight-slider" class="slider" min="0.5" max="2.0" step="0.1" value="1.0">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>점프력</span>
+                <span class="slider-value" id="power-value">1.0x</span>
+            </div>
+            <input type="range" id="power-slider" class="slider" min="0.5" max="2.0" step="0.1" value="1.0">
+        </div>
+    </div>
 
     <h1>🚀 행성별 점프력 비교</h1>
 
@@ -290,293 +60,30 @@
             </div>
         </div>
 
-        <div class="scoreboard">
-            <h2>🏆 최고 기록</h2>
-            <div class="score-item">
-                <div class="score-label"><span class="planet-icon" style="background:#0984e3"></span> 지구</div>
-                <div class="score-value" id="score-earth">-</div>
-            </div>
-            <div class="score-item">
-                <div class="score-label"><span class="planet-icon" style="background:#d63031"></span> 화성</div>
-                <div class="score-value" id="score-mars">-</div>
-            </div>
-            <div class="score-item">
-                <div class="score-label"><span class="planet-icon" style="background:#636e72"></span> 달</div>
-                <div class="score-value" id="score-moon">-</div>
+        <div class="jump-history">
+            <h2>📊 점프 기록</h2>
+            <div class="table-container">
+                <table id="jump-table">
+                    <thead>
+                        <tr>
+                            <th>행성</th>
+                            <th>무게</th>
+                            <th>파워</th>
+                            <th>높이</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jump-table-body">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #95a5a6;">점프 기록이 없습니다</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <script>
-        // Module aliases
-        const Engine = Matter.Engine,
-            Render = Matter.Render,
-            Runner = Matter.Runner,
-            Bodies = Matter.Bodies,
-            Body = Matter.Body,
-            Composite = Matter.Composite,
-            Events = Matter.Events,
-            Bounds = Matter.Bounds;
-
-        // Configuration
-        const width = 600;
-        const height = 500;
-        const groundHeight = 60;
-        const jumperSize = 44;
-
-        // Physics Setup
-        const engine = Engine.create();
-        const world = engine.world;
-
-        // Create Renderer
-        const render = Render.create({
-            element: document.getElementById('canvas-container'),
-            engine: engine,
-            options: {
-                width: width,
-                height: height,
-                wireframes: false,
-                background: 'transparent',
-                pixelRatio: window.devicePixelRatio || 1,
-                hasBounds: true // Enable bounds for camera
-            }
-        });
-
-        // Bodies
-        // 1. Ground
-        const ground = Bodies.rectangle(width / 2, height - groundHeight / 2, width, groundHeight, {
-            isStatic: true,
-            render: { fillStyle: '#2ecc71' } // Default Earth Green
-        });
-
-        // 2. Jumper (Astronaut Hitbox)
-        const jumper = Bodies.rectangle(width / 2, height - groundHeight - jumperSize / 2, jumperSize, jumperSize, {
-            chamfer: { radius: 15 },
-            restitution: 0,
-            friction: 0.5,
-            render: {
-                fillStyle: 'transparent', // We will draw custom sprite
-                opacity: 0
-            }
-        });
-
-        // 3. Walls (Invisible)
-        const wallLeft = Bodies.rectangle(-10, height / 2, 20, height * 10, { isStatic: true }); // Taller walls
-        const wallRight = Bodies.rectangle(width + 10, height / 2, 20, height * 10, { isStatic: true });
-        const ceiling = Bodies.rectangle(width / 2, -5000, width, 50, { isStatic: true }); // Very high ceiling
-
-        Composite.add(world, [ground, jumper, wallLeft, wallRight, ceiling]);
-
-        // Run the engine
-        Render.run(render);
-        const runner = Runner.create();
-        Runner.run(runner, engine);
-
-        // --- Game Logic ---
-
-        const gravities = {
-            earth: 1.0,
-            mars: 0.38,
-            moon: 0.16
-        };
-
-        const groundColors = {
-            earth: '#2ecc71',
-            mars: '#e17055',
-            moon: '#95a5a6'
-        };
-
-        const bgStyles = {
-            earth: 'var(--earth-bg)',
-            mars: 'var(--mars-bg)',
-            moon: 'var(--moon-bg)'
-        };
-
-        let currentPlanet = 'earth';
-        const jumpForce = 0.042 * jumper.mass; // Adjusted for slightly better feel
-        let isJumping = false;
-        let maxJumpHeight = 0;
-        const scores = { earth: 0, mars: 0, moon: 0 };
-
-        // Initial Setup
-        setPlanet('earth');
-
-        function setPlanet(planet) {
-            currentPlanet = planet;
-            engine.world.gravity.y = gravities[planet];
-
-            // Update UI Buttons
-            document.querySelectorAll('.planet-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.btn-${planet}`).classList.add('active');
-
-            // Update Background
-            document.body.style.background = bgStyles[planet];
-
-            // Toggle Stars
-            if (planet === 'moon') {
-                document.body.classList.add('moon-mode');
-            } else {
-                document.body.classList.remove('moon-mode');
-            }
-
-            // Update Ground Color
-            ground.render.fillStyle = groundColors[planet];
-
-            resetJumper();
-        }
-
-        function jump(e) {
-            if (e && e.cancelable) e.preventDefault(); // Prevent double firing on some touch devices
-            if (isJumping) return;
-
-            Body.applyForce(jumper, jumper.position, { x: 0, y: -jumpForce });
-
-            isJumping = true;
-            maxJumpHeight = 0;
-
-            const btn = document.getElementById('jump-btn');
-            btn.disabled = true;
-            btn.style.opacity = 0.5;
-        }
-
-        function resetJumper() {
-            Body.setVelocity(jumper, { x: 0, y: 0 });
-            Body.setAngularVelocity(jumper, 0);
-            Body.setPosition(jumper, {
-                x: width / 2,
-                y: height - groundHeight - jumperSize / 2 - 1
-            });
-            Body.setAngle(jumper, 0);
-
-            // Reset Camera
-            Render.lookAt(render, {
-                min: { x: 0, y: 0 },
-                max: { x: width, y: height }
-            });
-
-            isJumping = false;
-            const btn = document.getElementById('jump-btn');
-            btn.disabled = false;
-            btn.style.opacity = 1;
-        }
-
-        // Update Loop
-        Events.on(engine, 'afterUpdate', function () {
-            const groundSurfaceY = height - groundHeight;
-            const jumperBottomY = jumper.position.y + (jumperSize / 2);
-            let currentH = groundSurfaceY - jumperBottomY;
-            if (currentH < 0) currentH = 0;
-            const displayHeight = Math.floor(currentH);
-
-            document.querySelector('.current-height').innerText = `${displayHeight} cm`;
-
-            if (isJumping) {
-                if (displayHeight > maxJumpHeight) {
-                    maxJumpHeight = displayHeight;
-                }
-                // Landed check
-                if (Math.abs(jumper.velocity.y) < 0.1 && Math.abs(currentH) < 2 && jumper.position.y > height / 2) {
-                    finishJump();
-                }
-            }
-
-            // --- Camera Follow Logic ---
-            // Center the camera on the jumper if they go too high
-            const viewportCenterY = render.bounds.min.y + (render.bounds.max.y - render.bounds.min.y) / 2;
-            const targetY = jumper.position.y;
-
-            // Desired center Y for camera
-            let desiredCenterY = targetY;
-
-            // Clamp desiredCenterY so we don't show below ground
-            // Ground is at 'height'. Viewport height is 'height'.
-            // Max center Y should be height / 2 (which corresponds to bounds.max.y = height)
-            if (desiredCenterY > height / 2) {
-                desiredCenterY = height / 2;
-            }
-
-            // Smoothly interpolate current center to desired center
-            const diff = desiredCenterY - viewportCenterY;
-            const newCenterY = viewportCenterY + diff * 0.1; // Smooth factor
-
-            // Calculate new bounds
-            const halfHeight = (render.bounds.max.y - render.bounds.min.y) / 2;
-
-            Bounds.shift(render.bounds, {
-                x: 0,
-                y: newCenterY - halfHeight - render.bounds.min.y
-            });
-        });
-
-        function finishJump() {
-            if (!isJumping) return;
-            isJumping = false;
-
-            if (maxJumpHeight > scores[currentPlanet]) {
-                scores[currentPlanet] = maxJumpHeight;
-                document.getElementById(`score-${currentPlanet}`).innerText = `${maxJumpHeight} cm`;
-                const scoreEl = document.getElementById(`score-${currentPlanet}`);
-                scoreEl.style.color = '#d63031';
-                setTimeout(() => scoreEl.style.color = '#636e72', 1000);
-            }
-
-            const btn = document.getElementById('jump-btn');
-            btn.disabled = false;
-            btn.style.opacity = 1;
-
-            // Reset Camera smoothly or instantly?
-            // The update loop handles smooth return to ground because jumper returns to ground.
-        }
-
-        // Custom Render for Astronaut
-        Events.on(render, 'afterRender', function () {
-            const ctx = render.context;
-            const pos = jumper.position;
-            const angle = jumper.angle;
-            const s = jumperSize;
-
-            ctx.translate(pos.x, pos.y);
-            ctx.rotate(angle);
-
-            // 1. Backpack (Gray)
-            ctx.fillStyle = '#b2bec3';
-            ctx.beginPath();
-            ctx.roundRect(-s / 2 - 5, -s / 2 + 5, 10, s - 10, 5);
-            ctx.fill();
-
-            // 2. Body (White Suit)
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.roundRect(-s / 2, -s / 2, s, s, 10);
-            ctx.fill();
-            // Border
-            ctx.strokeStyle = '#dfe6e9';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // 3. Helmet Visor (Dark Blue)
-            ctx.fillStyle = '#2d3436';
-            ctx.beginPath();
-            ctx.ellipse(0, -5, s / 3, s / 4, 0, 0, 2 * Math.PI);
-            ctx.fill();
-
-            // 4. Glare on Visor
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.beginPath();
-            ctx.ellipse(5, -8, 3, 2, 0, 0, 2 * Math.PI);
-            ctx.fill();
-
-            // 5. Korean Flag or Patch (Optional - Red/Blue dot)
-            ctx.fillStyle = '#ff7675';
-            ctx.beginPath();
-            ctx.arc(0, 10, 3, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.rotate(-angle);
-            ctx.translate(-pos.x, -pos.y);
-        });
-
-    </script>
+    <!-- External JavaScript -->
+    <script src="script.js"></script>
 </body>
 
 </html>
